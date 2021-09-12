@@ -72,15 +72,14 @@ def nettacker_database_config():
     Returns:
         a JSON with Database configuration
     """
+    if os.environ.get('ELASTICSEARCH_DOCKER_ENV') == "true":
+        db_url = "elasticsearch:9200"
+    else:
+        db_url = "127.0.0.1:9200"
     return {
-        "DB": "sqlite",
-        # "DB":"mysql", "DB": "postgres"
-        "DATABASE": nettacker_paths()["database_path"],
-        # Name of the database
-        "USERNAME": "",
-        "PASSWORD": "",
-        "HOST": "",
-        "PORT": ""
+        # http://127.0.0.1:9200/ # todo: add SSL support later
+        "api_database": db_url,
+        "api_database_http_auth": ('elastic', 'changeme')  # DO NPT FORGET TO CHANGE THIS!
     }
 
 
@@ -148,6 +147,7 @@ def nettacker_analytics():
 
 def nettacker_global_config():
     return {
+        "nettacker_engine_identifier": "local_engine_1",
         "nettacker_paths": nettacker_paths(),
         "nettacker_api_config": nettacker_api_config(),
         "nettacker_database_config": nettacker_database_config(),
