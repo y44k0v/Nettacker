@@ -15,7 +15,7 @@ services:
       - ./.data/db:/usr/share/elasticsearch/data:Z
 
   redis:
-    image: 'bitnami/redis:5.0.13'
+    image: redislabs/rejson:1.0.8
     ports:
       - 6379:6379
     environment:
