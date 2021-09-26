@@ -286,7 +286,7 @@ $(document).ready(function () {
       selected_modules: selected_modules,
       graph_name: graph_name,
       language: language,
-      report_path_filename: $("#report_path_filename").val(),
+      report_path_filename: $("#output_file").val(),
       scan_ip_range: p_1,
       scan_subdomains: p_3,
       ping_before_scan: p_2,
@@ -708,24 +708,8 @@ function obsKeysToString(o, k, sep) {
         }
 
        for (j = 0; j < events.length; j++) {
-          cleaned_event = JSON.parse(JSON.stringify(events[j]))
-          delete cleaned_event.response
-          data = ""
-          for (key in cleaned_event){
-            data += key + ":" + cleaned_event[key] + ', '
-          }
-          data = data.slice(0, -2)
-          html_module_name +=   "<p class='mb-1 bold label label-success'>event: " + data + "</p> ";
-        }
-
-       for (j = 0; j < events.length; j++) {
-          cleaned_event = JSON.parse(JSON.stringify(events[j])).response.conditions_results
-          data = ""
-          for (key in cleaned_event){
-            data += key + ", "
-          }
-          data = data.slice(0, -2)
-          html_module_name += "<p class='mb-1 bold label label-warning'>condition_results: " + data + "</p> ";
+          html_module_name +=   "<p class='mb-1 bold label label-success'>event: " + events[j].split('conditions: ')[0] + "</p> ";
+          html_module_name += "<p class='mb-1 bold label label-warning'>condition_results: " + events[j].split('conditions: ')[1] + "</p> ";
         }
 
       
