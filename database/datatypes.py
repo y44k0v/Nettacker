@@ -11,8 +11,13 @@ elastic_search_types = {
                 'module_name': {'type': 'keyword'},
                 'nettacker_engine_identifier': {'type': 'keyword'},
                 'scan_unique_id': {'type': 'keyword'},
+                'sha256_checksum': {'type': 'keyword'},
                 'event': {'type': 'nested'},
                 'date': {
+                    'type': 'date',
+                    'format': 'yyyy-MM-dd HH:mm:ss||yyyy-MM-dd||epoch_millis'
+                },
+                'updated': {
                     'type': 'date',
                     'format': 'yyyy-MM-dd HH:mm:ss||yyyy-MM-dd||epoch_millis'
                 }
@@ -39,11 +44,9 @@ elastic_search_types = {
         'mappings': {
             'properties': {
                 'scan_unique_id': {'type': 'keyword'},
-                'nettacker_engine_identifier': {'type': 'keyword'},
                 'options': {'type': 'nested'},
                 'status': {'type': 'keyword'},
                 'report_path_filename': {'type': 'text'},
-                'md5': {'type': 'keyword'},
                 'file_content': {'type': 'binary'},
                 'date': {
                     'type': 'date',
