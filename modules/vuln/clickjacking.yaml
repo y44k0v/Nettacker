@@ -12,15 +12,16 @@ info:
 
 payloads:
   - library: http
-    verify: false
-    timeout: 3
-    cert: ""
-    stream: false
-    proxies: ""
     steps:
       - method: get
+        verify: false
+        timeout: 3
+        cert: ""
+        stream: false
+        proxies: ""
         headers:
           User-Agent: "{user_agent}"
+        allow_redirects: false
         url:
           nettacker_fuzzer:
             input_format: "{{schema}}://{target}:{{ports}}/"
@@ -39,11 +40,11 @@ payloads:
           conditions:
             headers:
               x-frame-options:
-                regex: DENY|SAMEORIGIN
-                reverse: true
+                regex: ^((?!SAMEORIGIN|DENY).)+$
+                reverse: false
               Content-Security-Policy:
-                regex: frame-ancestors|frame-src
-                reverse: true
+                regex: ^((?!frame-ancestors|frame-src).)+$
+                reverse: false
             content:
-              regex: http-equiv="Content-Security-Policy"
-              reverse: true
+              regex: ^((?!http-equiv=.*Content-Security-Policy.*content=.*(DENY|SAMEORIGIN)).)+$
+              reverse: false

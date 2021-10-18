@@ -12,15 +12,16 @@ info:
 
 payloads:
   - library: http
-    verify: false
-    timeout: 3
-    cert: ""
-    stream: false
-    proxies: ""
     steps:
       - method: get
+        verify: false
+        timeout: 3
+        cert: ""
+        stream: false
+        proxies: ""
         headers:
           User-Agent: "{user_agent}"
+        allow_redirects: false
         url:
           nettacker_fuzzer:
             input_format: "{{schema}}://{target}:{{ports}}/"
@@ -39,5 +40,5 @@ payloads:
           conditions:
             headers:
               X-Content-Type-Options:
-                regex: "nosniff"
-                reverse: true
+                regex: ^((?!nosniff).)+$
+                reverse: false

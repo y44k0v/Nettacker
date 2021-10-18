@@ -14,16 +14,16 @@ info:
 
 payloads:
   - library: http
-    verify: false
-    timeout: 3
-    cert: ""
-    stream: false
-    proxies: ""
-    allow_redirects: false
     steps:
       - method: get
+        verify: false
+        timeout: 3
+        cert: ""
+        stream: false
+        proxies: ""
         headers:
           User-Agent: "{user_agent}"
+        allow_redirects: false
         url:
           nettacker_fuzzer:
             input_format: "{{schema}}://{target}:{{ports}}/wp-admin/install.php"

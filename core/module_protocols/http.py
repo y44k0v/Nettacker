@@ -9,6 +9,9 @@ from core.utility import reverse_and_regex_condition
 from core.utility import process_conditions
 from core.utility import get_dependent_results_from_database
 from core.utility import replace_dependent_values
+from requests.packages.urllib3.exceptions import InsecureRequestWarning
+
+requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
 
 
 def response_conditions_matched(sub_step, response):
@@ -21,12 +24,7 @@ def response_conditions_matched(sub_step, response):
         if condition in ['reason', 'status_code', 'content']:
             regex = re.findall(re.compile(conditions[condition]['regex']), response[condition])
             reverse = conditions[condition]['reverse']
-            if 'reason' in conditions:
-                condition_results['reason'] = reverse_and_regex_condition(regex, reverse)
-            if 'status_code' in conditions:
-                condition_results['status_code'] = reverse_and_regex_condition(regex, reverse)
-            if 'content' in conditions:
-                condition_results['content'] = reverse_and_regex_condition(regex, reverse)
+            condition_results[condition] = reverse_and_regex_condition(regex, reverse)
         if condition == 'headers':
             # convert headers to case insensitive dict
             for key in response["headers"].copy():

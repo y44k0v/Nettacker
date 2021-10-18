@@ -13,13 +13,13 @@ info:
 
 payloads:
   - library: http
-    verify: false
-    timeout: 3
-    cert: ""
-    stream: false
-    proxies: ""
     steps:
       - method: get
+        verify: false
+        timeout: 3
+        cert: ""
+        stream: false
+        proxies: ""
         headers:
           User-Agent: "{user_agent}"
           Content-Type:
@@ -34,6 +34,7 @@ payloads:
                   - randomstring_xyz_2
                   - randomstring_xyz_3
           Accept: "*/*"
+        allow_redirects: false
         url:
           nettacker_fuzzer:
             input_format: "{{schema}}://{target}:{{ports}}/"
