@@ -2,16 +2,12 @@
 # -*- coding: utf-8 -*-
 
 import re
-import requests
 import copy
 import random
 from core.utility import reverse_and_regex_condition
 from core.utility import process_conditions
 from core.utility import get_dependent_results_from_database
 from core.utility import replace_dependent_values
-from requests.packages.urllib3.exceptions import InsecureRequestWarning
-
-requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
 
 
 def response_conditions_matched(sub_step, response):
@@ -104,6 +100,9 @@ class Engine:
     ):
         backup_method = copy.deepcopy(sub_step['method'])
         backup_response = copy.deepcopy(sub_step['response'])
+        import requests
+        from requests.packages.urllib3.exceptions import InsecureRequestWarning
+        requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
         action = getattr(requests, backup_method, None)
         if options['user_agent'] == 'random_user_agent':
             sub_step['headers']['User-Agent'] = random.choice(options['user_agents'])
@@ -136,6 +135,8 @@ class Engine:
         sub_step['method'] = backup_method
         sub_step['response'] = backup_response
         sub_step['response']['conditions_results'] = response_conditions_matched(sub_step, response)
+        del requests
+        del action
         return process_conditions(
             sub_step,
             module_name,
