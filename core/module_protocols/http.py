@@ -2,7 +2,6 @@
 # -*- coding: utf-8 -*-
 
 import re
-import gc
 import copy
 import random
 from core.utility import reverse_and_regex_condition
@@ -109,7 +108,6 @@ class Engine:
             sub_step['headers']['User-Agent'] = random.choice(options['user_agents'])
         del sub_step['method']
         del sub_step['response']
-        gc.collect()
         if 'dependent_on_temp_event' in backup_response:
             temp_event = get_dependent_results_from_database(
                 target,
@@ -121,7 +119,6 @@ class Engine:
                 sub_step,
                 temp_event
             )
-            gc.collect()
         for _ in range(options['retries']):
             try:
                 response = action(**sub_step)
@@ -140,7 +137,6 @@ class Engine:
         sub_step['response']['conditions_results'] = response_conditions_matched(sub_step, response)
         del requests
         del action
-        gc.collect()
         return process_conditions(
             sub_step,
             module_name,

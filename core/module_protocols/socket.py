@@ -2,7 +2,6 @@
 # -*- coding: utf-8 -*-
 
 import socket
-import gc
 import copy
 import re
 import os
@@ -246,7 +245,6 @@ class Engine:
         backup_response = copy.deepcopy(sub_step['response'])
         del sub_step['method']
         del sub_step['response']
-        gc.collect()
         if 'dependent_on_temp_event' in backup_response:
             temp_event = get_dependent_results_from_database(
                 target,
@@ -258,7 +256,6 @@ class Engine:
                 sub_step,
                 temp_event
             )
-            gc.collect()
         action = getattr(NettackerSocket, backup_method, None)
         for _ in range(options['retries']):
             try:
@@ -270,7 +267,6 @@ class Engine:
         sub_step['response'] = backup_response
         sub_step['response']['ssl_flag'] = response['ssl_flag'] if type(response) == dict else False
         sub_step['response']['conditions_results'] = response_conditions_matched(sub_step, response)
-        gc.collect()
         return process_conditions(
             sub_step,
             module_name,

@@ -151,11 +151,13 @@ class NettackerModules:
                     steps.append(step)
 
             for step in copy.deepcopy(self.module_content['payloads'][index]['steps']):
-                if 'dependent_on_temp_event' in step[0]['response'] and 'save_to_temp_events_only' in step[0]['response']:
+                if 'dependent_on_temp_event' in step[0]['response'] and 'save_to_temp_events_only' in step[0][
+                    'response']:
                     steps.append(step)
 
             for step in copy.deepcopy(self.module_content['payloads'][index]['steps']):
-                if 'dependent_on_temp_event' in step[0]['response'] and 'save_to_temp_events_only' not in step[0]['response']:
+                if 'dependent_on_temp_event' in step[0]['response'] and 'save_to_temp_events_only' not in step[0][
+                    'response']:
                     steps.append(step)
             self.module_content['payloads'][index]['steps'] = steps
 
@@ -225,7 +227,6 @@ class NettackerModules:
                         terminable=True
                     )
                     gc.collect()
-                gc.collect()
         wait_for_threads_to_finish(
             active_threads,
             maximum=None,
