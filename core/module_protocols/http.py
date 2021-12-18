@@ -105,11 +105,11 @@ class Engine:
         from requests.packages.urllib3.exceptions import InsecureRequestWarning
         requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
         action = getattr(requests, backup_method, None)
-        gc.collect()
         if options['user_agent'] == 'random_user_agent':
             sub_step['headers']['User-Agent'] = random.choice(options['user_agents'])
         del sub_step['method']
         del sub_step['response']
+        gc.collect()
         if 'dependent_on_temp_event' in backup_response:
             temp_event = get_dependent_results_from_database(
                 target,
