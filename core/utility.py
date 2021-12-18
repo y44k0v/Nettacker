@@ -238,7 +238,6 @@ def select_maximum_cpu_core(mode):
 
 def wait_for_threads_to_finish(threads, maximum=None, terminable=False, sub_process=False):
     while threads:
-        time.sleep(0.2)
         try:
             dead_threads = []
             for thread in threads:
@@ -249,7 +248,8 @@ def wait_for_threads_to_finish(threads, maximum=None, terminable=False, sub_proc
                     threads.remove(thread)
                 dead_threads = []
             if maximum and len(threads) < maximum:
-                break
+                return True
+            time.sleep(0.1)
         except KeyboardInterrupt:
             if terminable:
                 for thread in threads:
