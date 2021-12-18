@@ -246,6 +246,7 @@ def wait_for_threads_to_finish(threads, maximum=None, terminable=False, sub_proc
             if dead_threads:
                 for thread in dead_threads:
                     threads.remove(thread)
+                    del thread
                 dead_threads = []
             if maximum and len(threads) < maximum:
                 return True
