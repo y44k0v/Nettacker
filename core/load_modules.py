@@ -227,6 +227,7 @@ class NettackerModules:
             maximum=None,
             terminable=True
         )
+        del protocol
 
 
 def load_all_graphs():
