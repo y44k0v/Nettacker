@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import re
+import gc
 import copy
 import random
 from core.utility import reverse_and_regex_condition
@@ -104,6 +105,7 @@ class Engine:
         from requests.packages.urllib3.exceptions import InsecureRequestWarning
         requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
         action = getattr(requests, backup_method, None)
+        gc.collect()
         if options['user_agent'] == 'random_user_agent':
             sub_step['headers']['User-Agent'] = random.choice(options['user_agents'])
         del sub_step['method']
@@ -119,6 +121,7 @@ class Engine:
                 sub_step,
                 temp_event
             )
+            gc.collect()
         for _ in range(options['retries']):
             try:
                 response = action(**sub_step)
@@ -137,6 +140,7 @@ class Engine:
         sub_step['response']['conditions_results'] = response_conditions_matched(sub_step, response)
         del requests
         del action
+        gc.collect()
         return process_conditions(
             sub_step,
             module_name,
