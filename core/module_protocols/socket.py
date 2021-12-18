@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import socket
+import gc
 import copy
 import re
 import os
