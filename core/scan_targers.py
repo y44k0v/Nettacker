@@ -15,13 +15,13 @@ from core.graph import create_report
 
 
 def parallel_scan_process(options, targets, scan_unique_id, process_number):
-    active_threads = []
+    active_processes = []
     verbose_event_info(messages("single_process_started").format(process_number))
     total_number_of_modules = len(targets) * len(options.selected_modules)
     total_number_of_modules_counter = 1
     for target in targets:
         for module_name in options.selected_modules:
-            thread = Thread(
+            process = multiprocessing.Process(
                 target=perform_scan,
                 args=(
                     options,
@@ -33,8 +33,8 @@ def parallel_scan_process(options, targets, scan_unique_id, process_number):
                     total_number_of_modules
                 )
             )
-            thread.name = f"{target} -> {module_name}"
-            thread.start()
+            process.name = f"{target} -> {module_name}"
+            process.start()
             verbose_event_info(
                 messages("start_parallel_module_scan").format(
                     process_number,
@@ -45,10 +45,10 @@ def parallel_scan_process(options, targets, scan_unique_id, process_number):
                 )
             )
             total_number_of_modules_counter += 1
-            active_threads.append(thread)
-            if not wait_for_threads_to_finish(active_threads, options.parallel_module_scan, True):
+            active_processes.append(process)
+            if not wait_for_threads_to_finish(active_processes, maximum=options.parallel_module_scan, sub_process=True):
                 return False
-    wait_for_threads_to_finish(active_threads, maximum=None, terminable=True)
+    wait_for_threads_to_finish(active_processes, maximum=None, sub_process=True)
     return True
 
 

@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 import copy
-import gc
 import os
 import socket
 import yaml
@@ -179,7 +178,6 @@ class NettackerModules:
                 for _ in step:
                     total_number_of_requests += 1
         request_number_counter = 0
-        gc.collect()
         garbage_collector_counter = 0
         for payload in self.module_content['payloads']:
             protocol = getattr(
@@ -230,14 +228,12 @@ class NettackerModules:
                     garbage_collector_counter += 1
                     if garbage_collector_counter == self.module_thread_number:
                         garbage_collector_counter = 0
-                        gc.collect()
         wait_for_threads_to_finish(
             active_threads,
             maximum=None,
             terminable=True
         )
         del protocol
-        gc.collect()
 
 
 def load_all_graphs():
