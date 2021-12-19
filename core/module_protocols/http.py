@@ -87,12 +87,11 @@ def response_conditions_matched(sub_step, response):
     return []
 
 
-async def session_maker(backup_method):
-    async with aiohttp.ClientSession() as session:
-        return getattr(session, backup_method, None)
-
-
 class Engine:
+    async def session_maker(backup_method):
+        async with aiohttp.ClientSession() as session:
+            return getattr(session, backup_method, None)
+
     def run(
             sub_step,
             module_name,
