@@ -8,6 +8,7 @@ import time
 import json
 from glob import glob
 from io import StringIO
+import concurrent.futures
 
 
 def getaddrinfo(*args):
@@ -177,8 +178,6 @@ class NettackerModules:
             for step in payload['steps']:
                 for _ in step:
                     total_number_of_requests += 1
-        request_number_counter = 0
-        garbage_collector_counter = 0
         for payload in self.module_content['payloads']:
             protocol = getattr(
                 __import__(
@@ -187,11 +186,13 @@ class NettackerModules:
                 ),
                 'Engine'
             )
-            for step in payload['steps']:
-                for sub_step in step:
-                    thread = Thread(
-                        target=protocol.run,
-                        args=(
+            request_number_counter = 0
+            with concurrent.futures.ThreadPoolExecutor(max_workers=self.module_inputs['thread_per_host']) as executor:
+                for step in payload['steps']:
+                    for sub_step in step:
+                        request_number_counter += 1
+                        executor.submit(
+                            protocol.run,
                             sub_step,
                             self.module_name,
                             self.target,
@@ -203,37 +204,54 @@ class NettackerModules:
                             request_number_counter,
                             total_number_of_requests
                         )
-                    )
-                    thread.name = f"{self.target} -> {self.module_name} -> {sub_step}"
-                    request_number_counter += 1
-                    verbose_event_info(
-                        messages("sending_module_request").format(
-                            self.process_number,
-                            self.module_name,
-                            self.target,
-                            self.module_thread_number,
-                            self.total_module_thread_number,
-                            request_number_counter,
-                            total_number_of_requests
-                        )
-                    )
-                    thread.start()
-                    time.sleep(self.module_inputs['time_sleep_between_requests'])
-                    active_threads.append(thread)
-                    wait_for_threads_to_finish(
-                        active_threads,
-                        maximum=self.module_inputs['thread_per_host'],
-                        terminable=True
-                    )
-                    garbage_collector_counter += 1
-                    if garbage_collector_counter == self.module_thread_number:
-                        garbage_collector_counter = 0
-        wait_for_threads_to_finish(
-            active_threads,
-            maximum=None,
-            terminable=True
-        )
-        del protocol
+
+        #
+        #     for step in payload['steps']:
+        #         for sub_step in step:
+        #             thread = Thread(
+        #                 target=protocol.run,
+        #                 args=(
+        #                     sub_step,
+        #                     self.module_name,
+        #                     self.target,
+        #                     self.scan_unique_id,
+        #                     self.module_inputs,
+        #                     self.process_number,
+        #                     self.module_thread_number,
+        #                     self.total_module_thread_number,
+        #                     request_number_counter,
+        #                     total_number_of_requests
+        #                 )
+        #             )
+        #             thread.name = f"{self.target} -> {self.module_name} -> {sub_step}"
+        #             request_number_counter += 1
+        #             verbose_event_info(
+        #                 messages("sending_module_request").format(
+        #                     self.process_number,
+        #                     self.module_name,
+        #                     self.target,
+        #                     self.module_thread_number,
+        #                     self.total_module_thread_number,
+        #                     request_number_counter,
+        #                     total_number_of_requests
+        #                 )
+        #             )
+        #             thread.start()
+        #             time.sleep(self.module_inputs['time_sleep_between_requests'])
+        #             active_threads.append(thread)
+        #             wait_for_threads_to_finish(
+        #                 active_threads,
+        #                 maximum=self.module_inputs['thread_per_host'],
+        #                 terminable=True
+        #             )
+        #             garbage_collector_counter += 1
+        #             if garbage_collector_counter == self.module_thread_number:
+        #                 garbage_collector_counter = 0
+        # wait_for_threads_to_finish(
+        #     active_threads,
+        #     maximum=None,
+        #     terminable=True
+        # )
 
 
 def load_all_graphs():
